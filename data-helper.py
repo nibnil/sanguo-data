@@ -73,12 +73,8 @@ def get_boss_data(url, html_type=0):
     resp = requests.get(url)
     text = resp.text
     html = etree.HTML(text)
-    if html_type == 0:
-        elements = html.xpath(
-            '//html/body/table[2]/tr[2]/td[2]/table/tr[2]/td/table/tr[1]/td/table/tr[3]/td/table/tbody/tr[2]/td/table/tbody/tr[1]/td/table/tr')
-    else:
-        elements = html.xpath(
-            '//html/body/table[2]/tr[2]/td[2]/table/tr[2]/td/table/tr[1]/td/table/tr[3]/td/table/tbody/tr[2]/td/table/tr')
+    elements = html.xpath(
+        '//html/body/table[2]/tr[2]/td[2]/table/tr[2]/td/table/tr[1]/td/table/tr[3]/td/table/tbody/tr[2]/td/table/tr')
     first = True
     for element in elements:
         if first is True:
@@ -88,8 +84,7 @@ def get_boss_data(url, html_type=0):
                 level = int(level)
             except Exception as ex:
                 pass
-            maps = element.xpath('td/table/tbody/tr[2]/td[6]/text()')[0]
-            maps = maps.split('，')
+            maps = None
             products = element.xpath('td/table/tbody/tr[2]/td[7]/text()')[0]
             products = products.split(',')
             for product in products:
@@ -103,8 +98,9 @@ def get_boss_data(url, html_type=0):
                 level = int(level)
             except Exception as ex:
                 pass
-            maps = element.xpath('td/table/tbody/tr[3]/td[6]/text()')[0]
-            maps = maps.split('，')
+            # maps = element.xpath('td/table/tbody/tr[3]/td[6]/text()')[0]
+            # maps = maps.split('，')
+            maps = None
             products = element.xpath('td/table/tbody/tr[3]/td[7]/text()')[0]
             products = products.split(',')
             for product in products:
@@ -127,9 +123,9 @@ def main():
     #     index = "{:0>2d}".format(i)
     #     url = GW_URL.format(index)
     #     if i == 1:
-    #         data = get_boss_data(url, html_type=0)
+    #         data = get_data(url, html_type=0)
     #     else:
-    #         data = get_boss_data(url, html_type=1)
+    #         data = get_data(url, html_type=1)
     #     result = db.do_bulk_upsert(col='monster',
     #                                data=data,
     #                                filter_key=['name', 'level', 'maps', 'products'],
@@ -143,9 +139,10 @@ def main():
         else:
             data = get_boss_data(url, html_type=1)
         result = db.do_bulk_upsert(col='monster',
-                                    data=data,
-                                    filter_key=['name', 'level', 'maps', 'products'],
-                                    set_on_insert_key=['name', 'level', 'maps', 'products'])
+                                   data=data,
+                                   set_key=[],
+                                   filter_key=['name'],
+                                   set_on_insert_key=['name', 'level', 'maps', 'products'])
         print(result)
         sleep(5)
 

@@ -30,19 +30,17 @@ class MongodbHelper:
                 set_ = dict()
                 if set_on_insert_key:
                     for key in set_on_insert_key:
-                        value = d.pop(key)
+                        value = d.get(key)
                         set_on_insert[key] = value
                 if set_key:
                     for key in set_key:
-                        value = d.pop(key)
+                        value = d.get(key)
                         set_[key] = value
+                if set_key:
+                    update = {'$set': set_,
+                              '$setOnInsert': set_on_insert}
                 else:
-                    if d:
-                        set_ = d
-                        update = {'$set': set_,
-                                  '$setOnInsert': set_on_insert}
-                    else:
-                        update = {'$setOnInsert': set_on_insert}
+                    update = {'$setOnInsert': set_on_insert}
                 request = UpdateOne(filter=filter_, update=update, upsert=True)
                 requests.append(request)
             if requests:
