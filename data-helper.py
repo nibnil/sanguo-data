@@ -128,8 +128,9 @@ def main():
     #         data = get_data(url, html_type=1)
     #     result = db.do_bulk_upsert(col='monster',
     #                                data=data,
-    #                                filter_key=['name', 'level', 'maps', 'products'],
-    #                                set_on_insert_key=['name', 'level', 'maps', 'products'])
+    #                                filter_key=['name'],
+    #                                set_key = ['name', 'level', 'maps', 'products']
+    #                                set_on_insert_key=[])
     #     print(result)
     for i in range(1, 56):
         index = "{:0>2d}".format(i)
@@ -140,9 +141,9 @@ def main():
             data = get_boss_data(url, html_type=1)
         result = db.do_bulk_upsert(col='monster',
                                    data=data,
-                                   set_key=[],
+                                   set_key=['name', 'level', 'maps', 'products'],
                                    filter_key=['name'],
-                                   set_on_insert_key=['name', 'level', 'maps', 'products'])
+                                   set_on_insert_key=[])
         print(result)
         sleep(5)
 
